@@ -36,5 +36,5 @@ export default function Timer({ startTime }: { startTime: Date }) {
     return () => clearInterval(interval);
   }, [startTime]);
 
-  return <div className="text-6xl">T -{timeLeft}</div>;
+  return <div>T -{timeLeft}</div>;
 }

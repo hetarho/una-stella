@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import Timer from "./components/Timer";
+import Image from "next/image";
 
 export default function Home() {
   const allProcesses = [
@@ -12,17 +13,28 @@ export default function Home() {
   ];
   const currentProcess = 3;
   return (
-    <div className="flex flex-col w-full h-screen pr-[300px] pt-8">
-      <div className="flex flex-1 flex-col items-center gap-12 ">
+    <div className="relative flex flex-col w-full h-screen sm:pr-[300px] pt-8">
+      <div className="absolute right-0 top-0 w-[300px] h-full hidden sm:block">
+        <Image
+          src="/rocket.png"
+          alt="Background"
+          fill
+          style={{ objectFit: "cover" }}
+          priority
+        />
+      </div>
+      <div className="flex flex-1 flex-col items-center gap-12 pb-12">
         <div className="text-xl">우나 익스프레스 1호기 발사 캠페인</div>
-        <div className="flex gap-12">
+        <div className="flex gap-12 flex-col md:flex-row">
           <div>
             <div className="text-lg">발사 예정시간</div>
-            <div className="text-6xl">12:00:00</div>
+            <div className="text-5xl">12:00:00</div>
           </div>
           <div>
             <div className="text-lg">발사까지 남은시간</div>
-            <Timer startTime={new Date("2024-11-11T12:00:00")} />
+            <div className="text-5xl">
+              <Timer startTime={new Date("2024-11-11T12:00:00")} />
+            </div>
           </div>
         </div>
         <div className="flex flex-col gap-2 italic">
@@ -39,7 +51,7 @@ export default function Home() {
         </div>
       </div>
       <div className="flex">
-        <div className="bg-red-500 w-32 h-16">로고 들어갈 자리</div>
+        <div className="bg-gray-900 w-32 h-16">로고 들어갈 자리</div>
         <div className="flex-1 flex justify-center items-center text-xl">
           UNA EXPRESS - I
         </div>
