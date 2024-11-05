@@ -1,8 +1,33 @@
+"use client";
+
 import clsx from "clsx";
 import Timer from "./components/Timer";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { doc, getDoc } from "firebase/firestore/lite";
+import { db } from "@/firebaseConfig";
 
 export default function Home() {
+  const [launchTime, setLaunchTime] = useState<Date>(new Date());
+
+  useEffect(() => {
+    const fetchLaunchTime = async () => {
+      try {
+        const docRef = doc(db, "launch", "1");
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const utcDate = docSnap.data().time.toDate();
+          // UTC를 KST로 변환 (UTC+9)
+          const kstDate = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000);
+          setLaunchTime(kstDate);
+        }
+      } catch (error) {
+        console.error("Error fetching launch time:", error);
+      }
+    };
+    fetchLaunchTime();
+  }, []);
+
   const allProcesses = [
     "고압 헬륨가스 충전",
     "텔레메트리 작동 확인",
@@ -28,12 +53,18 @@ export default function Home() {
         <div className="flex gap-12 flex-col md:flex-row">
           <div>
             <div className="text-lg">발사 예정시간</div>
-            <div className="text-5xl">12:00:00</div>
+            <div className="text-5xl">
+              {launchTime?.toLocaleTimeString("ko-KR", {
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+              })}
+            </div>
           </div>
           <div>
             <div className="text-lg">발사까지 남은시간</div>
             <div className="text-5xl">
-              <Timer startTime={new Date("2024-11-11T12:00:00")} />
+              <Timer startTime={launchTime} />
             </div>
           </div>
         </div>

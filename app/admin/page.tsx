@@ -1,15 +1,52 @@
+"use client";
+
+import { db } from "@/firebaseConfig";
+import { doc, getDoc, setDoc } from "firebase/firestore/lite";
+import { useEffect, useState } from "react";
+
 export default function AdminPage() {
+  const [launchTime, setLaunchTime] = useState<Date>(new Date());
+
+  useEffect(() => {
+    const fetchLaunchTime = async () => {
+      const docRef = doc(db, "launch", "1");
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const utcDate = docSnap.data().time.toDate();
+        const kstDate = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000);
+        setLaunchTime(kstDate);
+      }
+    };
+    fetchLaunchTime();
+  }, []);
+
+  const handleLaunchTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLaunchTime(new Date(e.target.value));
+  };
+
+  const handleSaveLaunchTime = async () => {
+    const docRef = doc(db, "launch", "1");
+    await setDoc(docRef, { time: launchTime });
+  };
+
   return (
     <div>
       <div>콘솔창</div>
       <div>
-        <div>
+        <div className="flex gap-2 items-center flex-col">
           <div>발사 예정 시간</div>
-          <input />
-        </div>
-        <div>
-          <div>발사까지 남은시간</div>
-          <input />
+          <input
+            className="border-2 border-gray-300 rounded-md p-2 text-black"
+            type="datetime-local"
+            value={launchTime.toISOString().slice(0, -1)}
+            onChange={handleLaunchTimeChange}
+          />
+          <button
+            className="bg-blue-500 text-white p-2 rounded-md w-full"
+            onClick={handleSaveLaunchTime}
+          >
+            저장
+          </button>
         </div>
       </div>
       <div className="flex gap-2 items-center text-xl">
