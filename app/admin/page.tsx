@@ -29,6 +29,16 @@ export default function AdminPage() {
     await setDoc(docRef, { time: launchTime });
   };
 
+  const formatDateTimeLocal = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+
   return (
     <div>
       <div>콘솔창</div>
@@ -38,7 +48,7 @@ export default function AdminPage() {
           <input
             className="border-2 border-gray-300 rounded-md p-2 text-black"
             type="datetime-local"
-            value={launchTime.toISOString().slice(0, -1)}
+            value={formatDateTimeLocal(launchTime)}
             onChange={handleLaunchTimeChange}
           />
           <button

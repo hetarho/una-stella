@@ -8,7 +8,7 @@ import { doc, getDoc } from "firebase/firestore/lite";
 import { db } from "@/firebaseConfig";
 
 export default function Home() {
-  const [launchTime, setLaunchTime] = useState<Date>(new Date());
+  const [launchTime, setLaunchTime] = useState<Date>();
 
   useEffect(() => {
     const fetchLaunchTime = async () => {
@@ -17,8 +17,7 @@ export default function Home() {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           const utcDate = docSnap.data().time.toDate();
-          // UTC를 KST로 변환 (UTC+9)
-          const kstDate = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000);
+          const kstDate = new Date(utcDate.getTime());
           setLaunchTime(kstDate);
         }
       } catch (error) {
@@ -64,7 +63,7 @@ export default function Home() {
           <div>
             <div className="text-lg">발사까지 남은시간</div>
             <div className="text-5xl">
-              <Timer startTime={launchTime} />
+              <Timer startTime={launchTime ?? new Date()} />
             </div>
           </div>
         </div>
