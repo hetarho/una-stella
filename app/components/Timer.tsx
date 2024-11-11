@@ -1,12 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import TimeBox from "./TimeBox";
 
 export default function Timer({ startTime }: { startTime: Date }) {
-  const [timeLeft, setTimeLeft] = useState("");
+  const [hours, setHours] = useState("00");
+  const [minutes, setMinutes] = useState("00");
+  const [seconds, setSeconds] = useState("00");
 
   useEffect(() => {
-    const calculateTimeLeft = () => {
+    const setTime = () => {
       const now = new Date();
       const difference = startTime.getTime() - now.getTime();
 
@@ -20,21 +23,20 @@ export default function Timer({ startTime }: { startTime: Date }) {
       const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
-      // 시:분:초 형식으로 포맷팅
-      return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds
-        .toString()
-        .padStart(2, "0")}`;
+      setHours(hours.toString().padStart(2, "0"));
+      setMinutes(minutes.toString().padStart(2, "0"));
+      setSeconds(seconds.toString().padStart(2, "0"));
     };
 
     const interval = setInterval(() => {
-      setTimeLeft(calculateTimeLeft());
+      setTime();
     }, 1000);
 
     // 초기값 설정
-    setTimeLeft(calculateTimeLeft());
+    setTime();
 
     return () => clearInterval(interval);
   }, [startTime]);
 
-  return <div>T -{timeLeft}</div>;
+  return <TimeBox hours={hours} minutes={minutes} seconds={seconds} showT />;
 }
