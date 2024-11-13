@@ -1,64 +1,76 @@
 "use client";
 
 import clsx from "clsx";
-import Timer from "./components/Timer";
+import Timer from "./_components/Timer";
 import { useEffect, useState } from "react";
-import { doc, getDoc } from "firebase/firestore/lite";
-import { db } from "@/firebaseConfig";
 import Image from "next/image";
-import TimeBox from "./components/TimeBox";
+import TimeBox from "./_components/TimeBox";
+import allProcesses from "./_constant/allProcess";
+import ProcessNumber from "./_components/ProcessNumber";
+import { doc, onSnapshot } from "firebase/firestore";
+import { db } from "@/firebaseConfig";
+import { utcToKst } from "./utils/time";
 
 export default function Home() {
   const [launchTime, setLaunchTime] = useState<Date>();
   const [isSelectedImage, setIsSelectedImage] = useState(false);
   const [currentProcess, setCurrentProcess] = useState(1);
 
-  useEffect(() => {
-    const fetchLaunchTime = async () => {
-      try {
-        const docRef = doc(db, "launch", "1");
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          const utcDate = docSnap.data().time.toDate();
-          const kstDate = new Date(utcDate.getTime());
-          setLaunchTime(kstDate);
-        }
-      } catch (error) {
-        console.error("Error fetching launch time:", error);
-      }
-    };
+  // const fetchLaunchTime = async () => {
+  //   try {
+  //     const res = await fetch("/api/launchTime");
+  //     const data: { time: Date } = await res.json();
+  //     const utcDate = new Date(data.time);
+  //     setLaunchTime(utcDate);
+  //   } catch (error) {
+  //     console.error("Error fetching launch time:", error);
+  //   }
+  // };
 
+  // const fetchCurrentProcess = async () => {
+  //   const res = await fetch("/api/process");
+  //   const data: { current: number } = await res.json();
+  //   setCurrentProcess(data.current);
+  // };
+
+  useEffect(() => {
     const interval = setInterval(() => {
       setIsSelectedImage((prev) => !prev);
     }, 400);
 
-    fetchLaunchTime();
+    // Firestore 문서 참조 생성
+    const launchTimeRef = doc(db, "launch", "1");
+    const processRef = doc(db, "process", "1");
 
-    return () => clearInterval(interval);
+    // 실시간 리스너 설정
+    const launchTimeUnsubscribe = onSnapshot(
+      launchTimeRef,
+      (snapshot) => {
+        if (snapshot.exists()) {
+          const utcDate = new Date(snapshot.data().time.toDate());
+          const kstDate = utcToKst(utcDate);
+          setLaunchTime(kstDate);
+        }
+      }
+    );
+
+    const processUnsubscribe = onSnapshot(
+      processRef,
+      (snapshot) => {
+        if (snapshot.exists()) {
+          setCurrentProcess(snapshot.data().current);
+        }
+      }
+    );
+
+    // Clean up
+    return () => {
+      clearInterval(interval);
+      launchTimeUnsubscribe();
+      processUnsubscribe();
+    };
   }, []);
 
-  const allProcesses = [
-    "",
-    "발사 기반 시설 준비",
-    "발사 시스템 운용 기초 준비",
-    "항공전자 및 페이로드 시스템 준비",
-    "온보드 벨브 작동용 고압 헬륨 탱크 충전",
-    "추진제 탱크 가압용 고압 헬륨 탱크 충전",
-    "점화용 기체 메탄 앰퓰 탱크 충전",
-    "점화용 기체 산소 앰퓰 탱크 충전",
-    "연료 주입(케로신)",
-    "텔레메트리 점검(S-Band, UHf)",
-    "해상 통제 시작",
-    "산불 방지용 발사장 대량 살수 작업",
-    "육상 통제 시작",
-    "발사 운용 모드 전환",
-    "발사대 기립",
-    "산화제 주입 (엑체 산소)",
-    "발사 자동 시퀀스 및 발사",
-    "발사 자동 종료 및 이상 유무 확인",
-    "발사 기반 설비 초기화 및 종료",
-    "",
-  ];
   return (
     <div
       className="flex flex-col w-full relative"
@@ -70,6 +82,7 @@ export default function Home() {
           alt="Background"
           width={810}
           height={1036}
+          className="-z-10"
           style={{
             objectFit: "contain",
             width: "auto",
@@ -86,29 +99,24 @@ export default function Home() {
           <div>
             <div className="text-[30px] font-semibold">발사 예정시간</div>
             <div className="text-5xl mt-[30px]">
-              <TimeBox time={launchTime ?? new Date()} />
+              <TimeBox time={launchTime} />
             </div>
           </div>
           <div className="">
             <div className="text-[30px] font-semibold">발사까지 남은시간</div>
             <div className="text-5xl mt-[30px]">
-              <Timer startTime={launchTime ?? new Date()} />
+              <Timer startTime={launchTime} />
             </div>
           </div>
         </div>
-        <div
-          className="flex flex-col gap-2 mt-[78px]"
-          onClick={() => {
-            setCurrentProcess((prev) => (prev + 1 > 18 ? 1 : prev + 1));
-          }}
-        >
+        <div className="flex flex-col gap-2 mt-[78px]">
           {[...allProcesses]
             .slice(Math.max(0, currentProcess - 1), currentProcess + 2)
             .map((process, index) => (
               <div
                 key={process}
                 className={clsx(
-                  "text-lg h-[80px] flex-shrink-0 font-semibold w-fit pr-20 text-[38px] flex items-center justify-start pl-[40px] rounded-[18px]",
+                  "text-lg h-[80px] w-[747px] flex-shrink-0 font-semibold pr-20 text-[38px] flex items-center justify-start pl-[40px] rounded-[18px]",
                   {
                     "opacity-50": index !== 1,
                     "bg-[#90FF67] text-black": index === 1,
@@ -126,6 +134,16 @@ export default function Home() {
               </div>
             ))}
         </div>
+      </div>
+      <div className="mb-9 mx-9 flex justify-between relative items-center">
+        <div className="absolute bg-[#2A471C] w-full h-[1px]"></div>
+        {[...allProcesses].slice(1, 19).map((process, index) => (
+          <ProcessNumber
+            key={`process-number-${index}`}
+            number={index + 1}
+            isPassed={index < currentProcess}
+          />
+        ))}
       </div>
     </div>
   );

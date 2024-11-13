@@ -1,32 +1,51 @@
 "use client";
 
-import { db } from "@/firebaseConfig";
-import { doc, getDoc, setDoc } from "firebase/firestore/lite";
 import { useEffect, useState } from "react";
+import allProcesses from "../_constant/allProcess";
+import clsx from "clsx";
 
 export default function AdminPage() {
   const [launchTime, setLaunchTime] = useState<Date>(new Date());
+  const [currentProcess, setCurrentProcess] = useState(0);
+
+  const fetchCurrentProcess = async () => {
+    const res = await fetch("/api/process");
+    const data = await res.json();
+    setCurrentProcess(data.current);
+  };
+
+  const fetchLaunchTime = async () => {
+    const res = await fetch("/api/launchTime");
+    const data: { time: Date } = await res.json();
+    const utcDate = new Date(data.time);
+    setLaunchTime(utcDate);
+  };
 
   useEffect(() => {
-    const fetchLaunchTime = async () => {
-      const docRef = doc(db, "launch", "1");
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        const utcDate = docSnap.data().time.toDate();
-        const kstDate = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000);
-        setLaunchTime(kstDate);
-      }
-    };
     fetchLaunchTime();
+    fetchCurrentProcess();
   }, []);
+
+  const handleCurrentProcessClick = async (index: number) => {
+    await fetch("/api/process", {
+      method: "POST",
+      body: JSON.stringify({ current: index }),
+    });
+
+    await fetchCurrentProcess();
+  };
 
   const handleLaunchTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLaunchTime(new Date(e.target.value));
   };
 
   const handleSaveLaunchTime = async () => {
-    const docRef = doc(db, "launch", "1");
-    await setDoc(docRef, { time: launchTime });
+    await fetch("/api/launchTime", {
+      method: "POST",
+      body: JSON.stringify({
+        time: new Date(launchTime.getTime() - 9 * 60 * 60 * 1000),
+      }),
+    });
   };
 
   const formatDateTimeLocal = (date: Date) => {
@@ -40,40 +59,55 @@ export default function AdminPage() {
   };
 
   return (
-    <div>
-      <div>콘솔창</div>
-      <div>
-        <div className="flex gap-2 items-center flex-col">
-          <div>발사 예정 시간</div>
+    <div
+      className="flex flex-col gap-20 p-4 w-full items-center pt-20"
+      style={{ minHeight: "calc(100vh - 64px)" }}
+    >
+      <div className="text-5xl font-semibold">콘솔창</div>
+      <div className="flex flex-col gap-8 items-center">
+        <div className="flex gap-4 items-center justify-center">
+          <div className="font-semibold text-2xl ">발사 예정 시간</div>
           <input
-            className="border-2 border-gray-300 rounded-md p-2 text-black"
+            className="rounded-md p-2 text-black outline-none text-2xl"
             type="datetime-local"
             value={formatDateTimeLocal(launchTime)}
             onChange={handleLaunchTimeChange}
           />
-          <button
-            className="bg-blue-500 text-white p-2 rounded-md w-full"
-            onClick={handleSaveLaunchTime}
-          >
-            저장
-          </button>
+        </div>
+        <button
+          className="bg-[#90FF67] text-black font-semibold text-2xl p-2 rounded-md w-80"
+          onClick={handleSaveLaunchTime}
+        >
+          저장
+        </button>
+      </div>
+      <div className="flex flex-col gap-8 items-center">
+        <div className="flex gap-2 items-center text-4xl font-bold">
+          전체 프로세스
+        </div>
+        <div className="flex flex-col gap-6">
+          {[...allProcesses].slice(1, 19).map((process, index) => (
+            <div
+              key={`process-${index}`}
+              className="flex gap-4"
+              onClick={() => handleCurrentProcessClick(index + 1)}
+            >
+              <div
+                className={clsx(
+                  "w-[767px] h-[80px] flex items-center justify-center rounded-[18px] font-semibold text-2xl",
+                  {
+                    "bg-[#90FF67] text-black ": index === currentProcess - 1,
+                    "hover:bg-white hover:bg-opacity-20":
+                      index !== currentProcess - 1,
+                  }
+                )}
+              >
+                {process}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-      <div className="flex gap-2 items-center text-xl">
-        전체 프로세스
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="1em"
-          height="1em"
-          viewBox="0 0 32 32"
-        >
-          <path
-            fill="currentColor"
-            d="M19.05 5.06c0-1.68-1.37-3.06-3.06-3.06s-3.07 1.38-3.06 3.06v7.87H5.06C3.38 12.93 2 14.3 2 15.99c0 1.68 1.38 3.06 3.06 3.06h7.87v7.86c0 1.68 1.37 3.06 3.06 3.06c1.68 0 3.06-1.37 3.06-3.06v-7.86h7.86c1.68 0 3.06-1.37 3.06-3.06c0-1.68-1.37-3.06-3.06-3.06h-7.86V5.06Z"
-          ></path>
-        </svg>
-      </div>
-      <div></div>
     </div>
   );
 }

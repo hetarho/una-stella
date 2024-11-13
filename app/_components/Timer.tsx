@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import TimeBox from "./TimeBox";
 
-export default function Timer({ startTime }: { startTime: Date }) {
+export default function Timer({ startTime }: { startTime: Date | undefined }) {
   const [hours, setHours] = useState("00");
   const [minutes, setMinutes] = useState("00");
   const [seconds, setSeconds] = useState("00");
@@ -11,7 +11,7 @@ export default function Timer({ startTime }: { startTime: Date }) {
   useEffect(() => {
     const setTime = () => {
       const now = new Date();
-      const difference = startTime.getTime() - now.getTime();
+      const difference = (startTime?.getTime() ?? now.getTime() )- now.getTime();
 
       // 남은 시간이 없으면 "0:00:00" 반환
       if (difference <= 0) {
