@@ -14,24 +14,7 @@ import { utcToKst } from "./utils/time";
 export default function Home() {
   const [launchTime, setLaunchTime] = useState<Date>();
   const [isSelectedImage, setIsSelectedImage] = useState(false);
-  const [currentProcess, setCurrentProcess] = useState(1);
-
-  // const fetchLaunchTime = async () => {
-  //   try {
-  //     const res = await fetch("/api/launchTime");
-  //     const data: { time: Date } = await res.json();
-  //     const utcDate = new Date(data.time);
-  //     setLaunchTime(utcDate);
-  //   } catch (error) {
-  //     console.error("Error fetching launch time:", error);
-  //   }
-  // };
-
-  // const fetchCurrentProcess = async () => {
-  //   const res = await fetch("/api/process");
-  //   const data: { current: number } = await res.json();
-  //   setCurrentProcess(data.current);
-  // };
+  const [currentProcess, setCurrentProcess] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -43,25 +26,19 @@ export default function Home() {
     const processRef = doc(db, "process", "1");
 
     // 실시간 리스너 설정
-    const launchTimeUnsubscribe = onSnapshot(
-      launchTimeRef,
-      (snapshot) => {
-        if (snapshot.exists()) {
-          const utcDate = new Date(snapshot.data().time.toDate());
-          const kstDate = utcToKst(utcDate);
-          setLaunchTime(kstDate);
-        }
+    const launchTimeUnsubscribe = onSnapshot(launchTimeRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const utcDate = new Date(snapshot.data().time.toDate());
+        const kstDate = utcToKst(utcDate);
+        setLaunchTime(kstDate);
       }
-    );
+    });
 
-    const processUnsubscribe = onSnapshot(
-      processRef,
-      (snapshot) => {
-        if (snapshot.exists()) {
-          setCurrentProcess(snapshot.data().current);
-        }
+    const processUnsubscribe = onSnapshot(processRef, (snapshot) => {
+      if (snapshot.exists()) {
+        setCurrentProcess(snapshot.data().current);
       }
-    );
+    });
 
     // Clean up
     return () => {
@@ -76,19 +53,77 @@ export default function Home() {
       className="flex flex-col w-full relative"
       style={{ height: "calc(100vh - 64px)" }}
     >
-      <div className="absolute top-0 right-0 h-full">
-        <Image
-          src={isSelectedImage ? "/rocket.png" : "/rocket_selected.png"}
-          alt="Background"
-          width={810}
-          height={1036}
-          className="-z-10"
-          style={{
-            objectFit: "contain",
-            width: "auto",
-            height: "100%",
-          }}
+      <div className="absolute top-0 right-0 h-full flex">
+        <ProcessImage
+          currentProcess={currentProcess}
+          isSelectedImage={isSelectedImage}
         />
+        <div className="flex flex-col gap-[26px] mt-[127px] mr-[26px]">
+          <ProcessInfo
+            currentProcess={currentProcess}
+            processNumbers={[1, 18]}
+            imgName="LPB"
+            text="LPB"
+            width={147}
+            height={66}
+          />
+          <ProcessInfo
+            currentProcess={currentProcess}
+            processNumbers={[1, 13, 18]}
+            imgName="PF"
+            text="PF"
+            width={147}
+            height={66}
+          />
+          <ProcessInfo
+            currentProcess={currentProcess}
+            processNumbers={[2, 18]}
+            imgName="MCC"
+            text="MCC"
+            width={147}
+            height={66}
+          />
+          <ProcessInfo
+            currentProcess={currentProcess}
+            processNumbers={[18]}
+            imgName="MAO"
+            text="MAO"
+            width={147}
+            height={66}
+          />
+          <ProcessInfo
+            currentProcess={currentProcess}
+            processNumbers={[9, 18]}
+            imgName="AR"
+            text="AR"
+            width={63}
+            height={82}
+          />
+          <ProcessInfo
+            currentProcess={currentProcess}
+            processNumbers={[10, 17]}
+            imgName="sea"
+            text="해양"
+            width={84}
+            height={84}
+          />
+          <ProcessInfo
+            currentProcess={currentProcess}
+            processNumbers={[11, 17]}
+            imgName="fire"
+            text="소방"
+            width={84}
+            height={84}
+          />
+          <ProcessInfo
+            currentProcess={currentProcess}
+            processNumbers={[12]}
+            imgName="police"
+            text="경찰"
+            width={84}
+            height={84}
+          />
+        </div>
       </div>
       <div className="flex flex-1 flex-col items-start pb-12 pl-[76px] pt-[126px] relative z-10">
         <div className="text-[20px] font-medium">UNA EXPRESS - 1</div>
@@ -146,5 +181,93 @@ export default function Home() {
         ))}
       </div>
     </div>
+  );
+}
+
+function ProcessInfo({
+  currentProcess,
+  processNumbers,
+  imgName,
+  text,
+  width,
+  height,
+}: {
+  currentProcess: number;
+  processNumbers: number[];
+  imgName: string;
+  text: string;
+  width: number;
+  height: number;
+}) {
+  return (
+    <div className="flex w-[243px] justify-between">
+      <div
+        className={clsx("text-[24px] font-semibold", {
+          "text-white": !processNumbers.includes(currentProcess),
+          "text-[#90FF67]": processNumbers.includes(currentProcess),
+        })}
+      >
+        {text}
+      </div>
+      <div className="w-[147px] flex justify-center">
+        <Image
+          src={`/${imgName}${
+            processNumbers.includes(currentProcess) ? "_selected" : ""
+          }.png`}
+          alt={text}
+          width={width}
+          height={height}
+        />
+      </div>
+    </div>
+  );
+}
+
+function ProcessImage({
+  currentProcess,
+  isSelectedImage,
+}: {
+  currentProcess: number;
+  isSelectedImage: boolean;
+}) {
+  const [url, setUrl] = useState(`/process_selected${currentProcess}.png`);
+
+  useEffect(() => {
+    const hasSelectedImage = [3, 4, 5, 6, 7, 8, 9, 13, 15, 16, 18].includes(
+      currentProcess
+    );
+
+    let defaultImageNumber;
+
+    if (currentProcess <= 13) {
+      defaultImageNumber = 1;
+    } else if (currentProcess <= 14) {
+      defaultImageNumber = 1;
+    } else if (currentProcess <= 16) {
+      defaultImageNumber = 2;
+    } else {
+      defaultImageNumber = 3;
+    }
+
+    setUrl(
+      isSelectedImage && hasSelectedImage
+        ? `/process_selected${currentProcess}.png`
+        : `/process_default${defaultImageNumber}.png`
+    );
+  }, [isSelectedImage, currentProcess]);
+
+  return (
+    <Image
+      src={url}
+      alt="Background"
+      width={911}
+      height={911}
+      className="-z-10"
+      style={{
+        objectFit: "contain",
+        width: "auto",
+        height: "100%",
+      }}
+    />
   );
 }
