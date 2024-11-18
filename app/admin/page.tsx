@@ -15,12 +15,20 @@ export default function AdminPage() {
   const [initialInputMinutes, setInitialInputMinutes] = useState("");
   const [initialInputSeconds, setInitialInputSeconds] = useState("");
 
+  const [initialInputLeftHours, setInitialInputLeftHours] = useState("");
+  const [initialInputLeftMinutes, setInitialInputLeftMinutes] = useState("");
+  const [initialInputLeftSeconds, setInitialInputLeftSeconds] = useState("");
+
   const [currentInputYear, setCurrentInputYear] = useState("");
   const [currentInputMonth, setCurrentInputMonth] = useState("");
   const [currentInputDay, setCurrentInputDay] = useState("");
   const [currentInputHours, setCurrentInputHours] = useState("");
   const [currentInputMinutes, setCurrentInputMinutes] = useState("");
   const [currentInputSeconds, setCurrentInputSeconds] = useState("");
+
+  const [currentInputLeftHours, setCurrentInputLeftHours] = useState("");
+  const [currentInputLeftMinutes, setCurrentInputLeftMinutes] = useState("");
+  const [currentInputLeftSeconds, setCurrentInputLeftSeconds] = useState("");
 
   const fetchCurrentProcess = async () => {
     const res = await fetch("/api/process");
@@ -49,22 +57,13 @@ export default function AdminPage() {
     await fetchCurrentProcess();
   };
 
-  const handleInputLaunchTimeChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const {
-      target: { value },
-    } = e;
-    console.log(value);
-  };
-
   const handleSaveLaunchTime = async () => {
-    await fetch("/api/launchTime", {
-      method: "POST",
-      body: JSON.stringify({
-        time: new Date(launchTime.getTime() - 9 * 60 * 60 * 1000),
-      }),
-    });
+    // await fetch("/api/launchTime", {
+    //   method: "POST",
+    //   body: JSON.stringify({
+    //     time: new Date(launchTime.getTime() - 9 * 60 * 60 * 1000),
+    //   }),
+    // });
   };
 
   const formatDateTimeLocal = (date: Date) => {
@@ -76,14 +75,20 @@ export default function AdminPage() {
     const sec = String(date.getSeconds()).padStart(2, "0");
 
     const now = new Date();
-    const difference = date.getTime() - now.getTime();
+    const difference = date.getTime() - now.getTime() - 9 * 60 * 60 * 1000;
 
     // 시간, 분, 초 계산
-    const leftHours = Math.floor(difference / (1000 * 60 * 60));
+    const leftHours = Math.floor(difference / (1000 * 60 * 60))
+      .toString()
+      .padStart(2, "0");
     const leftMinutes = Math.floor(
       (difference % (1000 * 60 * 60)) / (1000 * 60)
-    );
-    const leftSeconds = Math.floor((difference % (1000 * 60)) / 1000);
+    )
+      .toString()
+      .padStart(2, "0");
+    const leftSeconds = Math.floor((difference % (1000 * 60)) / 1000)
+      .toString()
+      .padStart(2, "0");
 
     return {
       year,
@@ -117,18 +122,81 @@ export default function AdminPage() {
     setInitialInputHours(`${hours}`);
     setInitialInputMinutes(`${minutes}`);
     setInitialInputSeconds(`${sec}`);
+
+    setCurrentInputYear(`${year}`);
+    setCurrentInputMonth(`${month}`);
+    setCurrentInputDay(`${day}`);
+    setCurrentInputHours(`${hours}`);
+    setCurrentInputMinutes(`${minutes}`);
+    setCurrentInputSeconds(`${sec}`);
+
+    setInitialInputLeftHours(`${leftHours}`);
+    setInitialInputLeftMinutes(`${leftMinutes}`);
+    setInitialInputLeftSeconds(`${leftSeconds}`);
+
+    setCurrentInputLeftHours(`${leftHours}`);
+    setCurrentInputLeftMinutes(`${leftMinutes}`);
+    setCurrentInputLeftSeconds(`${leftSeconds}`);
   }, [launchTime]);
 
-  function handleInputHours(value: string) {
+  function resetLaunchTime() {
+    setCurrentInputYear(initialInputYear);
+    setCurrentInputMonth(initialInputMonth);
+    setCurrentInputDay(initialInputDay);
+    setCurrentInputHours(initialInputHours);
+    setCurrentInputMinutes(initialInputMinutes);
+    setCurrentInputSeconds(initialInputSeconds);
+  }
+
+  function resetLeftTime() {
+    setCurrentInputLeftHours(initialInputLeftHours);
+    setCurrentInputLeftMinutes(initialInputLeftMinutes);
+    setCurrentInputLeftSeconds(initialInputLeftSeconds);
+  }
+
+  function handleInputYear(value: string) {
+    setCurrentInputYear(value);
+    resetLeftTime();
+  }
+
+  function handleInputMonth(value: string) {
     setCurrentInputHours(value);
+    resetLeftTime();
+  }
+
+  function handleInputDay(value: string) {
+    setCurrentInputDay(value);
+    resetLeftTime();
+  }
+
+  function handleInputHours(value: string) {
+    setCurrentInputMinutes(value);
+    resetLeftTime();
   }
 
   function handleInputMinutes(value: string) {
     setCurrentInputMinutes(value);
+    resetLeftTime();
   }
 
   function handleInputSeconds(value: string) {
     setCurrentInputSeconds(value);
+    resetLeftTime();
+  }
+
+  function handleInputLeftHours(value: string) {
+    setCurrentInputLeftHours(value);
+    resetLaunchTime();
+  }
+
+  function handleInputLeftMinutes(value: string) {
+    setCurrentInputLeftMinutes(value);
+    resetLaunchTime();
+  }
+
+  function handleInputLeftSeconds(value: string) {
+    setCurrentInputLeftSeconds(value);
+    resetLaunchTime();
   }
 
   return (
@@ -143,21 +211,21 @@ export default function AdminPage() {
           <Selector
             min={2024}
             max={2025}
-            onChange={handleInputHours}
+            onChange={handleInputYear}
             initialValue={initialInputYear}
           />
           <div className="text-2xl mr-2">년</div>
           <Selector
             min={1}
             max={12}
-            onChange={handleInputHours}
+            onChange={handleInputMonth}
             initialValue={initialInputMonth}
           />
           <div className="text-2xl mr-2">월</div>
           <Selector
             min={0}
             max={31}
-            onChange={handleInputHours}
+            onChange={handleInputDay}
             initialValue={initialInputDay}
           />
           <div className="text-2xl mr-2">일</div>
@@ -183,13 +251,6 @@ export default function AdminPage() {
           />
           <div className="text-2xl mr-2">초</div>
         </div>
-        <div className="flex gap-4 items-center justify-center">
-          <div className="font-semibold text-2xl w-48">발사까지 남은 시간</div>
-          <input
-            className="rounded-md p-2 text-black outline-none text-2xl"
-            onChange={handleInputLaunchTimeChange}
-          />
-        </div>
         <button
           className={clsx("font-semibold text-2xl p-2 rounded-md w-full", {
             "bg-[#90FF67] text-black":
@@ -209,7 +270,57 @@ export default function AdminPage() {
           })}
           onClick={handleSaveLaunchTime}
         >
-          저장
+          발사 예정시각 변경
+        </button>
+        <div className="flex gap-4 items-center justify-center">
+          <div className="font-semibold text-2xl w-48">발사까지 남은 시간</div>
+          <Selector
+            min={0}
+            max={23}
+            onChange={handleInputLeftHours}
+            initialValue={initialInputLeftHours}
+          />
+          <div className="text-2xl mr-2">시</div>
+          <Selector
+            min={0}
+            max={59}
+            onChange={handleInputLeftMinutes}
+            initialValue={initialInputLeftMinutes}
+          />
+          <div className="text-2xl mr-2">분</div>
+          <Selector
+            min={0}
+            max={59}
+            onChange={handleInputLeftSeconds}
+            initialValue={initialInputLeftSeconds}
+          />
+          <div className="text-2xl mr-2">초</div>
+        </div>
+        <button
+          className={clsx("font-semibold text-2xl p-2 rounded-md w-full", {
+            "bg-[#90FF67] text-black":
+              currentInputLeftHours !== initialInputLeftHours ||
+              currentInputLeftMinutes !== initialInputLeftMinutes ||
+              currentInputLeftSeconds !== initialInputLeftSeconds,
+            "bg-neutral-700":
+              currentInputLeftHours === initialInputLeftHours &&
+              currentInputLeftMinutes === initialInputLeftMinutes &&
+              currentInputLeftSeconds === initialInputLeftSeconds,
+          })}
+          onClick={() => {
+            console.log(
+              currentInputLeftHours,
+              currentInputLeftMinutes,
+              currentInputLeftSeconds
+            );
+            console.log(
+              initialInputLeftHours,
+              initialInputLeftMinutes,
+              initialInputLeftSeconds
+            );
+          }}
+        >
+          남은 시간 변경
         </button>
       </div>
       <div className="flex flex-col gap-8 items-center">
@@ -260,6 +371,7 @@ function Selector({
 
   useEffect(() => {
     if (!containerRef.current) return;
+    console.log(initialValue);
 
     const selectedIndex = parseInt(initialValue) - min;
     containerRef.current.scrollTo({
@@ -276,10 +388,10 @@ function Selector({
     const selectedIndex = Math.round(scrollTop / itemHeight);
     const selectedValue = min + selectedIndex;
 
-    setSelectedValue(selectedValue.toString());
+    setSelectedValue(selectedValue.toString().padStart(2, "0"));
 
     // 부모 컴포넌트로 선택된 값 전달
-    onChange(selectedValue.toString());
+    onChange(selectedValue.toString().padStart(2, "0"));
 
     // 선택된 요소를 중앙으로 맞추기
     containerRef.current.scrollTo({
@@ -328,7 +440,7 @@ function Selector({
               "font-bold text-2xl text-center h-10 flex items-center justify-center pr-4",
               {
                 "bg-[#90FF67] text-black":
-                  selectedValue === (min + index).toString(),
+                  selectedValue === (min + index).toString().padStart(2, "0"),
                 "opacity-50":
                   Math.abs(parseInt(selectedValue) - min - index) === 1,
                 "opacity-20":
@@ -337,7 +449,7 @@ function Selector({
             )}
             style={{ height: itemHeight }}
           >
-            {min + index}
+            {(min + index).toString().padStart(2, "0")}
           </div>
         ))}
         <div className="h-28"></div>
