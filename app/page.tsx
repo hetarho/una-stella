@@ -63,7 +63,7 @@ export default function Home() {
             currentProcess={currentProcess}
             processNumbers={[1, 18]}
             imgName="LPB"
-            text="LPB"
+            text="준비실"
             width={147}
             height={66}
           />
@@ -71,7 +71,7 @@ export default function Home() {
             currentProcess={currentProcess}
             processNumbers={[1, 13, 18]}
             imgName="PF"
-            text="PF"
+            text="추진제<br>공급설비"
             width={147}
             height={66}
           />
@@ -79,7 +79,7 @@ export default function Home() {
             currentProcess={currentProcess}
             processNumbers={[2, 18]}
             imgName="MCC"
-            text="MCC"
+            text="통제실"
             width={147}
             height={66}
           />
@@ -87,7 +87,7 @@ export default function Home() {
             currentProcess={currentProcess}
             processNumbers={[18]}
             imgName="MAO"
-            text="MAO"
+            text="지원실"
             width={147}
             height={66}
           />
@@ -95,7 +95,7 @@ export default function Home() {
             currentProcess={currentProcess}
             processNumbers={[9, 18]}
             imgName="AR"
-            text="AR"
+            text="안테나 룸"
             width={63}
             height={82}
           />
@@ -132,7 +132,7 @@ export default function Home() {
         </div>
         <div className="flex gap-[68px] flex-col md:flex-row mt-[60px]">
           <div>
-            <div className="text-[30px] font-semibold">발사 예정시간</div>
+            <div className="text-[30px] font-semibold">발사 예정 시각</div>
             <div className="text-5xl mt-[30px]">
               <TimeBox time={launchTime} />
             </div>
@@ -202,12 +202,22 @@ function ProcessInfo({
   return (
     <div className="flex w-[243px] justify-between">
       <div
-        className={clsx("text-[24px] font-semibold", {
-          "text-white": !processNumbers.includes(currentProcess),
-          "text-[#90FF67]": processNumbers.includes(currentProcess),
-        })}
+        className={clsx(
+          "text-[24px] font-semibold flex flex-col items-center justify-center",
+          {
+            "text-white": !processNumbers.includes(currentProcess),
+            "text-[#90FF67]": processNumbers.includes(currentProcess),
+          }
+        )}
       >
-        {text}
+        {text.split("<br>").map((t) => (
+          <span
+            key={t}
+            className="-m-1 flex items-center justify-center h-full"
+          >
+            {t}
+          </span>
+        ))}
       </div>
       <div className="w-[147px] flex justify-center">
         <Image
@@ -242,18 +252,23 @@ function ProcessImage({
     if (currentProcess <= 13) {
       defaultImageNumber = 1;
     } else if (currentProcess <= 14) {
-      defaultImageNumber = 1;
+      defaultImageNumber = 4;
     } else if (currentProcess <= 16) {
       defaultImageNumber = 2;
     } else {
       defaultImageNumber = 3;
     }
 
-    setUrl(
-      isSelectedImage && hasSelectedImage
-        ? `/process_selected${currentProcess}.png`
-        : `/process_default${defaultImageNumber}.png`
-    );
+    let url: string;
+    if (currentProcess == 14) {
+      url = "/process_default4.gif";
+    } else {
+      url =
+        isSelectedImage && hasSelectedImage
+          ? `/process_selected${currentProcess}.png`
+          : `/process_default${defaultImageNumber}.png`;
+    }
+    setUrl(url);
   }, [isSelectedImage, currentProcess]);
 
   return (

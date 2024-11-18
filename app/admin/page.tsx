@@ -1,12 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import allProcesses from "../_constant/allProcess";
 import clsx from "clsx";
 
 export default function AdminPage() {
   const [launchTime, setLaunchTime] = useState<Date>(new Date());
   const [currentProcess, setCurrentProcess] = useState(0);
+  const [isLaunchTimeChanged, setIsLaunchTimeChanged] = useState(false);
+
+  const [inputDate, setInputDate] = useState("");
+  const [inputTime, setInputTime] = useState("");
 
   const fetchCurrentProcess = async () => {
     const res = await fetch("/api/process");
@@ -54,9 +58,44 @@ export default function AdminPage() {
     const day = String(date.getDate()).padStart(2, "0");
     const hours = String(date.getHours()).padStart(2, "0");
     const minutes = String(date.getMinutes()).padStart(2, "0");
+    const sec = String(date.getSeconds()).padStart(2, "0");
 
-    return `${year}-${month}-${day}T${hours}:${minutes}`;
+    return {
+      year,
+      month,
+      day,
+      hours,
+      minutes,
+      sec,
+    };
   };
+
+  useEffect(() => {
+    const { day, hours, minutes, month, sec, year } =
+      formatDateTimeLocal(launchTime);
+
+    setInputDate(`${year}-${month}-${day}`);
+    setInputTime(`${hours}:${minutes}:${sec}`);
+  }, [launchTime]);
+
+  function handleInputDate(e: ChangeEvent<HTMLInputElement>) {
+    const {
+      target: { value },
+    } = e;
+
+    setInputDate(value);
+
+    setIsLaunchTimeChanged(true);
+  }
+
+  function handleInputTime(e: ChangeEvent<HTMLInputElement>) {
+    const {
+      target: { value },
+    } = e;
+
+    setInputTime(value);
+    setIsLaunchTimeChanged(true);
+  }
 
   return (
     <div
@@ -66,16 +105,26 @@ export default function AdminPage() {
       <div className="text-5xl font-semibold">콘솔창</div>
       <div className="flex flex-col gap-8 items-center">
         <div className="flex gap-4 items-center justify-center">
-          <div className="font-semibold text-2xl ">발사 예정 시간</div>
+          <div className="font-semibold text-2xl w-48">발사 예정 시각</div>
           <input
             className="rounded-md p-2 text-black outline-none text-2xl"
-            type="datetime-local"
-            value={formatDateTimeLocal(launchTime)}
-            onChange={handleLaunchTimeChange}
+            value={inputDate}
+            onChange={handleInputDate}
+          />
+        </div>
+        <div className="flex gap-4 items-center justify-center">
+          <div className="font-semibold text-2xl w-48">발사까지 남은 시간</div>
+          <input
+            className="rounded-md p-2 text-black outline-none text-2xl"
+            value={inputTime}
+            onChange={handleInputTime}
           />
         </div>
         <button
-          className="bg-[#90FF67] text-black font-semibold text-2xl p-2 rounded-md w-80"
+          className={clsx("font-semibold text-2xl p-2 rounded-md w-full", {
+            "bg-[#90FF67] text-black": isLaunchTimeChanged,
+            "bg-neutral-700": !isLaunchTimeChanged,
+          })}
           onClick={handleSaveLaunchTime}
         >
           저장
