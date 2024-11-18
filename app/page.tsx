@@ -53,7 +53,12 @@ export default function Home() {
       className="flex flex-col w-full relative"
       style={{ height: "calc(100vh - 64px)" }}
     >
-      <div className="absolute top-0 right-0 h-full flex">
+      <div
+        className="absolute top-0 right-0 flex"
+        style={{
+          height: "calc(100vh - 64px - 80px)",
+        }}
+      >
         <ProcessImage
           currentProcess={currentProcess}
           isSelectedImage={isSelectedImage}
