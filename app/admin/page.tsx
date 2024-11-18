@@ -362,7 +362,7 @@ export default function AdminPage() {
                   }
                 )}
               >
-                {process}
+                {index + 1}. {process}
               </div>
             </div>
           ))}
