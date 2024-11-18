@@ -58,12 +58,23 @@ export default function AdminPage() {
   };
 
   const handleSaveLaunchTime = async () => {
-    // await fetch("/api/launchTime", {
-    //   method: "POST",
-    //   body: JSON.stringify({
-    //     time: new Date(launchTime.getTime() - 9 * 60 * 60 * 1000),
-    //   }),
-    // });
+    const launchTime = new Date(
+      parseInt(currentInputYear),
+      parseInt(currentInputMonth) - 1,
+      parseInt(currentInputDay),
+      parseInt(currentInputHours),
+      parseInt(currentInputMinutes),
+      parseInt(currentInputSeconds)
+    );
+
+    console.log(launchTime);
+
+    await fetch("/api/launchTime", {
+      method: "POST",
+      body: JSON.stringify({
+        time: new Date(launchTime.getTime() - 9 * 60 * 60 * 1000),
+      }),
+    });
   };
 
   const formatDateTimeLocal = (date: Date) => {
@@ -160,7 +171,7 @@ export default function AdminPage() {
   }
 
   function handleInputMonth(value: string) {
-    setCurrentInputHours(value);
+    setCurrentInputMonth(value);
     resetLeftTime();
   }
 
@@ -170,7 +181,7 @@ export default function AdminPage() {
   }
 
   function handleInputHours(value: string) {
-    setCurrentInputMinutes(value);
+    setCurrentInputHours(value);
     resetLeftTime();
   }
 
@@ -206,50 +217,50 @@ export default function AdminPage() {
     >
       <div className="text-5xl font-semibold">콘솔창</div>
       <div className="flex flex-col gap-8 items-center">
-        <div className="flex gap-2 items-center justify-center">
-          <div className="font-semibold text-2xl w-48">발사 예정 시각</div>
+        <div className="flex gap-1 items-center justify-center">
+          <div className="font-semibold text-2xl w-36">발사 예정 시각</div>
           <Selector
             min={2024}
             max={2025}
             onChange={handleInputYear}
             initialValue={initialInputYear}
           />
-          <div className="text-2xl mr-2">년</div>
+          <div className="text-lg mr-1">년</div>
           <Selector
             min={1}
             max={12}
             onChange={handleInputMonth}
             initialValue={initialInputMonth}
           />
-          <div className="text-2xl mr-2">월</div>
+          <div className="text-lg mr-1">월</div>
           <Selector
             min={0}
             max={31}
             onChange={handleInputDay}
             initialValue={initialInputDay}
           />
-          <div className="text-2xl mr-2">일</div>
+          <div className="text-lg mr-1">일</div>
           <Selector
             min={0}
             max={23}
             onChange={handleInputHours}
             initialValue={initialInputHours}
           />
-          <div className="text-2xl mr-2">시</div>
+          <div className="text-lg mr-1">시</div>
           <Selector
             min={0}
             max={59}
             onChange={handleInputMinutes}
             initialValue={initialInputMinutes}
           />
-          <div className="text-2xl mr-2">분</div>
+          <div className="text-lg mr-1">분</div>
           <Selector
             min={0}
             max={59}
             onChange={handleInputSeconds}
             initialValue={initialInputSeconds}
           />
-          <div className="text-2xl mr-2">초</div>
+          <div className="text-lg mr-1">초</div>
         </div>
         <button
           className={clsx("font-semibold text-2xl p-2 rounded-md w-full", {
@@ -276,25 +287,25 @@ export default function AdminPage() {
           <div className="font-semibold text-2xl w-48">발사까지 남은 시간</div>
           <Selector
             min={0}
-            max={23}
+            max={96}
             onChange={handleInputLeftHours}
             initialValue={initialInputLeftHours}
           />
-          <div className="text-2xl mr-2">시</div>
+          <div className="text-2xl mr-1">시</div>
           <Selector
             min={0}
             max={59}
             onChange={handleInputLeftMinutes}
             initialValue={initialInputLeftMinutes}
           />
-          <div className="text-2xl mr-2">분</div>
+          <div className="text-2xl mr-1">분</div>
           <Selector
             min={0}
             max={59}
             onChange={handleInputLeftSeconds}
             initialValue={initialInputLeftSeconds}
           />
-          <div className="text-2xl mr-2">초</div>
+          <div className="text-2xl mr-1">초</div>
         </div>
         <button
           className={clsx("font-semibold text-2xl p-2 rounded-md w-full", {
