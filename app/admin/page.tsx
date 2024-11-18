@@ -58,7 +58,7 @@ export default function AdminPage() {
   };
 
   const handleSaveLaunchTime = async () => {
-    const launchTime = new Date(
+    const newLaunchTime = new Date(
       parseInt(currentInputYear),
       parseInt(currentInputMonth) - 1,
       parseInt(currentInputDay),
@@ -67,14 +67,30 @@ export default function AdminPage() {
       parseInt(currentInputSeconds)
     );
 
-    console.log(launchTime);
+    await fetch("/api/launchTime", {
+      method: "POST",
+      body: JSON.stringify({
+        time: new Date(newLaunchTime.getTime() - 9 * 60 * 60 * 1000),
+      }),
+    });
+    fetchLaunchTime();
+  };
+
+  const handleSaveLeftTime = async () => {
+    const newLaunchTime = new Date(
+      new Date().getTime() +
+        parseInt(currentInputLeftHours) * 60 * 60 * 1000 +
+        parseInt(currentInputLeftMinutes) * 60 * 1000 +
+        parseInt(currentInputLeftSeconds) * 1000
+    );
 
     await fetch("/api/launchTime", {
       method: "POST",
       body: JSON.stringify({
-        time: new Date(launchTime.getTime() - 9 * 60 * 60 * 1000),
+        time: newLaunchTime.getTime() - 9 * 60 * 60 * 1000,
       }),
     });
+    fetchLaunchTime();
   };
 
   const formatDateTimeLocal = (date: Date) => {
@@ -86,7 +102,7 @@ export default function AdminPage() {
     const sec = String(date.getSeconds()).padStart(2, "0");
 
     const now = new Date();
-    const difference = date.getTime() - now.getTime() - 9 * 60 * 60 * 1000;
+    const difference = date.getTime() - now.getTime();
 
     // 시간, 분, 초 계산
     const leftHours = Math.floor(difference / (1000 * 60 * 60))
@@ -217,8 +233,8 @@ export default function AdminPage() {
     >
       <div className="text-5xl font-semibold">콘솔창</div>
       <div className="flex flex-col gap-8 items-center">
+        <div className="font-semibold text-3xl">발사 예정 시각</div>
         <div className="flex gap-1 items-center justify-center">
-          <div className="font-semibold text-2xl w-36">발사 예정 시각</div>
           <Selector
             min={2024}
             max={2025}
@@ -283,8 +299,8 @@ export default function AdminPage() {
         >
           발사 예정시각 변경
         </button>
+        <div className="font-semibold text-3xl mt-10">발사까지 남은 시간</div>
         <div className="flex gap-4 items-center justify-center">
-          <div className="font-semibold text-2xl w-48">발사까지 남은 시간</div>
           <Selector
             min={0}
             max={96}
@@ -319,16 +335,7 @@ export default function AdminPage() {
               currentInputLeftSeconds === initialInputLeftSeconds,
           })}
           onClick={() => {
-            console.log(
-              currentInputLeftHours,
-              currentInputLeftMinutes,
-              currentInputLeftSeconds
-            );
-            console.log(
-              initialInputLeftHours,
-              initialInputLeftMinutes,
-              initialInputLeftSeconds
-            );
+            handleSaveLeftTime();
           }}
         >
           남은 시간 변경
