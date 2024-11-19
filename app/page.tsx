@@ -63,75 +63,75 @@ export default function Home() {
           currentProcess={currentProcess}
           isSelectedImage={isSelectedImage}
         />
-        <div className="flex flex-col gap-[26px] mt-[127px] mr-[26px]">
+        <div className="flex flex-col mt-[64px] mr-[26px] justify-between">
           <ProcessInfo
             currentProcess={currentProcess}
             processNumbers={[1, 18]}
             imgName="LPB"
             text="준비실"
-            width={147}
-            height={66}
+            width={160}
+            height={71}
           />
           <ProcessInfo
             currentProcess={currentProcess}
-            processNumbers={[1, 13, 18]}
+            processNumbers={[1, 10, 18]}
             imgName="PF"
             text="추진제<br>공급설비"
-            width={147}
-            height={66}
+            width={160}
+            height={71}
           />
           <ProcessInfo
             currentProcess={currentProcess}
-            processNumbers={[2, 18]}
+            processNumbers={[3, 18]}
             imgName="MCC"
             text="통제실"
-            width={147}
-            height={66}
+            width={160}
+            height={71}
           />
           <ProcessInfo
             currentProcess={currentProcess}
             processNumbers={[18]}
             imgName="MAO"
             text="지원실"
-            width={147}
-            height={66}
+            width={160}
+            height={71}
           />
           <ProcessInfo
             currentProcess={currentProcess}
             processNumbers={[9, 18]}
             imgName="AR"
             text="안테나 룸"
-            width={63}
-            height={82}
+            width={69}
+            height={90}
           />
           <ProcessInfo
             currentProcess={currentProcess}
-            processNumbers={[10, 17]}
+            processNumbers={[12, 17]}
             imgName="sea"
             text="해양"
-            width={84}
-            height={84}
+            width={92}
+            height={92}
           />
           <ProcessInfo
             currentProcess={currentProcess}
             processNumbers={[11, 17]}
             imgName="fire"
             text="소방"
-            width={84}
-            height={84}
+            width={92}
+            height={92}
           />
           <ProcessInfo
             currentProcess={currentProcess}
-            processNumbers={[12]}
+            processNumbers={[13]}
             imgName="police"
             text="경찰"
-            width={84}
-            height={84}
+            width={92}
+            height={92}
           />
         </div>
       </div>
       <div className="flex flex-1 flex-col items-start pb-12 pl-[76px] pt-[126px] relative z-10">
-        <div className="text-[20px] font-medium">UNA EXPRESS - 1</div>
+        <div className="text-[20px] font-medium">UNA EXPRESS - I</div>
         <div className="text-[50px] font-semibold">
           우나 익스프레스 1호기 발사 캠페인​
         </div>
@@ -156,7 +156,7 @@ export default function Home() {
               <div
                 key={process}
                 className={clsx(
-                  "text-lg h-[80px] w-[747px] flex-shrink-0 font-semibold pr-20 text-[38px] flex items-center justify-start pl-[40px] rounded-[18px]",
+                  "text-lg h-[80px] w-[747px] flex-shrink-0 font-semibold pr-20 text-[2.125rem] flex items-center justify-start pl-[40px] rounded-[18px]",
                   {
                     "opacity-50": index !== 1,
                     "bg-[#90FF67] text-black": index === 1,
@@ -205,10 +205,10 @@ function ProcessInfo({
   height: number;
 }) {
   return (
-    <div className="flex w-[243px] justify-between">
+    <div className="flex w-[306px] justify-between">
       <div
         className={clsx(
-          "text-[24px] font-semibold flex flex-col items-center justify-center",
+          "text-[24px] font-semibold flex flex-col items-start justify-center",
           {
             "text-white": !processNumbers.includes(currentProcess),
             "text-[#90FF67]": processNumbers.includes(currentProcess),
@@ -224,7 +224,7 @@ function ProcessInfo({
           </span>
         ))}
       </div>
-      <div className="w-[147px] flex justify-center">
+      <div className="w-[160px] flex justify-start items-start">
         <Image
           src={`/${imgName}${
             processNumbers.includes(currentProcess) ? "_selected" : ""

@@ -441,15 +441,15 @@ function Selector({
   return (
     <div
       className={clsx("overflow-hidden", {
-        "w-8": initialValue.length !== 4,
+        "w-9": initialValue.length !== 4,
         "w-16": initialValue.length === 4,
       })}
     >
       <div
         ref={containerRef}
         className={clsx("overflow-y-scroll h-64 ", {
-          "w-12": initialValue.length !== 4,
-          "w-20": initialValue.length === 4,
+          "w-16": initialValue.length !== 4,
+          "w-24": initialValue.length === 4,
         })}
       >
         {/* 빈 공간 추가로 중앙 정렬 보정 */}
