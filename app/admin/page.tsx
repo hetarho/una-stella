@@ -228,7 +228,7 @@ export default function AdminPage() {
 
   return (
     <div
-      className="flex flex-col gap-20 p-4 w-full items-center pt-20"
+      className="flex flex-col gap-12 sm:gap-20 p-4 w-full items-center pt-20"
       style={{ minHeight: "calc(100vh - 64px)" }}
     >
       <div className="text-5xl font-semibold">콘솔창</div>
@@ -241,42 +241,42 @@ export default function AdminPage() {
             onChange={handleInputYear}
             initialValue={initialInputYear}
           />
-          <div className="text-lg mr-1">년</div>
+          <div className="text-lg sm:text-2xl font-semibold">년</div>
           <Selector
             min={1}
             max={12}
             onChange={handleInputMonth}
             initialValue={initialInputMonth}
           />
-          <div className="text-lg mr-1">월</div>
+          <div className="text-lg sm:text-2xl font-semibold">월</div>
           <Selector
             min={0}
             max={31}
             onChange={handleInputDay}
             initialValue={initialInputDay}
           />
-          <div className="text-lg mr-1">일</div>
+          <div className="text-lg sm:text-2xl font-semibold">일</div>
           <Selector
             min={0}
             max={23}
             onChange={handleInputHours}
             initialValue={initialInputHours}
           />
-          <div className="text-lg mr-1">시</div>
+          <div className="text-lg sm:text-2xl font-semibold">시</div>
           <Selector
             min={0}
             max={59}
             onChange={handleInputMinutes}
             initialValue={initialInputMinutes}
           />
-          <div className="text-lg mr-1">분</div>
+          <div className="text-lg sm:text-2xl font-semibold">분</div>
           <Selector
             min={0}
             max={59}
             onChange={handleInputSeconds}
             initialValue={initialInputSeconds}
           />
-          <div className="text-lg mr-1">초</div>
+          <div className="text-lg sm:text-2xl font-semibold">초</div>
         </div>
         <button
           className={clsx("font-semibold text-2xl p-2 rounded-md w-full", {
@@ -324,16 +324,19 @@ export default function AdminPage() {
           <div className="text-2xl mr-1">초</div>
         </div>
         <button
-          className={clsx("font-semibold text-2xl p-2 rounded-md w-full", {
-            "bg-[#90FF67] text-black":
-              currentInputLeftHours !== initialInputLeftHours ||
-              currentInputLeftMinutes !== initialInputLeftMinutes ||
-              currentInputLeftSeconds !== initialInputLeftSeconds,
-            "bg-neutral-700":
-              currentInputLeftHours === initialInputLeftHours &&
-              currentInputLeftMinutes === initialInputLeftMinutes &&
-              currentInputLeftSeconds === initialInputLeftSeconds,
-          })}
+          className={clsx(
+            "font-semibold text-2xl p-2 rounded-md px-20 w-full ",
+            {
+              "bg-[#90FF67] text-black":
+                currentInputLeftHours !== initialInputLeftHours ||
+                currentInputLeftMinutes !== initialInputLeftMinutes ||
+                currentInputLeftSeconds !== initialInputLeftSeconds,
+              "bg-neutral-700":
+                currentInputLeftHours === initialInputLeftHours &&
+                currentInputLeftMinutes === initialInputLeftMinutes &&
+                currentInputLeftSeconds === initialInputLeftSeconds,
+            }
+          )}
           onClick={() => {
             handleSaveLeftTime();
           }}
@@ -345,7 +348,7 @@ export default function AdminPage() {
         <div className="flex gap-2 items-center text-4xl font-bold">
           전체 프로세스
         </div>
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-2 sm:gap-6">
           {[...allProcesses].slice(1, 19).map((process, index) => (
             <div
               key={`process-${index}`}
@@ -354,7 +357,7 @@ export default function AdminPage() {
             >
               <div
                 className={clsx(
-                  "w-[767px] h-[80px] flex items-center justify-center rounded-[18px] font-semibold text-2xl",
+                  "w-full sm:w-[767px] h-[60px] sm:h-[80px] flex items-center justify-center rounded-[18px] font-semibold text-xl sm:text-2xl",
                   {
                     "bg-[#90FF67] text-black ": index === currentProcess - 1,
                     "hover:bg-white hover:bg-opacity-20":
@@ -438,15 +441,15 @@ function Selector({
   return (
     <div
       className={clsx("overflow-hidden", {
-        "w-12": initialValue.length !== 4,
+        "w-8": initialValue.length !== 4,
         "w-16": initialValue.length === 4,
       })}
     >
       <div
         ref={containerRef}
         className={clsx("overflow-y-scroll h-64 ", {
-          "w-20": initialValue.length !== 4,
-          "w-24": initialValue.length === 4,
+          "w-12": initialValue.length !== 4,
+          "w-20": initialValue.length === 4,
         })}
       >
         {/* 빈 공간 추가로 중앙 정렬 보정 */}
