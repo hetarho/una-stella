@@ -5,6 +5,10 @@ import allProcesses from "../_constant/allProcess";
 import clsx from "clsx";
 
 export default function AdminPage() {
+  const [isAuth, setIsAuth] = useState(false);
+  const [authInput, setAuthInput] = useState("");
+  const [isAuthError, setIsAuthError] = useState(false);
+
   const [launchTime, setLaunchTime] = useState<Date>(new Date());
   const [currentProcess, setCurrentProcess] = useState(0);
 
@@ -226,7 +230,43 @@ export default function AdminPage() {
     resetLaunchTime();
   }
 
-  return (
+  return !isAuth ? (
+    <div
+      className="w-screen flex items-center justify-center flex-col gap-12"
+      style={{ height: "calc(100vh - 64px)" }}
+    >
+      <div className="text-5xl font-semibold">인증 코드를 입력해주세요.</div>
+      <div className="flex flex-col gap-4 items-center">
+        <input
+          className="w-[520px] h-16 text-4xl font-semibold border-b-2 border-neutral-700 text-black"
+          onChange={(e) => {
+            setAuthInput(e.target.value);
+            setIsAuthError(false);
+          }}
+        />
+
+        {isAuthError && (
+          <div className="text-red-500 text-2xl font-semibold">
+            인증 코드가 일치하지 않습니다.
+          </div>
+        )}
+      </div>
+      <div
+        className="w-[520px] h-16 text-4xl font-semibold rounded-[18px] flex items-center justify-center border-neutral-700 bg-[#90FF67] text-black cursor"
+        onClick={() => {
+          const authentication =
+            authInput === process.env.NEXT_PUBLIC_ADMIN_CODE;
+          if (authentication) {
+            setIsAuth(true);
+          } else {
+            setIsAuthError(true);
+          }
+        }}
+      >
+        확인
+      </div>
+    </div>
+  ) : (
     <div
       className="flex flex-col gap-12 sm:gap-20 p-4 w-full items-center pt-20"
       style={{ minHeight: "calc(100vh - 64px)" }}

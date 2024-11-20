@@ -54,7 +54,7 @@ export default function Home() {
       style={{ height: "calc(100vh - 64px)" }}
     >
       <div
-        className="absolute top-0 right-0 flex"
+        className="absolute top-0 right-0 flex gap-20"
         style={{
           height: "calc(100vh - 64px - 80px)",
         }}
@@ -63,7 +63,7 @@ export default function Home() {
           currentProcess={currentProcess}
           isSelectedImage={isSelectedImage}
         />
-        <div className="flex flex-col mt-[64px] mr-[26px] justify-between">
+        <div className="flex flex-col mt-[64px] mr-[100px] mb-[40px] justify-between">
           <ProcessInfo
             currentProcess={currentProcess}
             processNumbers={[1, 18]}
@@ -108,25 +108,25 @@ export default function Home() {
             currentProcess={currentProcess}
             processNumbers={[12, 17]}
             imgName="sea"
-            text="해양"
-            width={92}
-            height={92}
+            text="해상 통제"
+            width={120}
+            height={120}
           />
           <ProcessInfo
             currentProcess={currentProcess}
             processNumbers={[11, 17]}
             imgName="fire"
             text="소방"
-            width={92}
-            height={92}
+            width={120}
+            height={120}
           />
           <ProcessInfo
             currentProcess={currentProcess}
             processNumbers={[13]}
             imgName="police"
             text="경찰"
-            width={92}
-            height={92}
+            width={120}
+            height={120}
           />
         </div>
       </div>
@@ -156,7 +156,7 @@ export default function Home() {
               <div
                 key={process}
                 className={clsx(
-                  "h-[80px] w-[747px] flex-shrink-0 font-semibold pr-20 text-[30px] flex items-center justify-start pl-[40px] rounded-[18px]",
+                  "h-[88px] w-[747px] flex-shrink-0 font-semibold pr-20 text-[40px] flex items-center justify-start pl-[40px] rounded-[18px]",
                   {
                     "opacity-50": index !== 1,
                     "bg-[#90FF67] text-black": index === 1,
@@ -205,7 +205,7 @@ function ProcessInfo({
   height: number;
 }) {
   return (
-    <div className="flex w-[306px] justify-between">
+    <div className="flex w-[306px] justify-between h-[120px] items-center">
       <div
         className={clsx(
           "text-[24px] font-semibold flex flex-col items-start justify-center",
