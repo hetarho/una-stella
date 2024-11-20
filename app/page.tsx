@@ -131,19 +131,19 @@ export default function Home() {
         </div>
       </div>
       <div className="flex flex-1 flex-col items-start pb-12 pl-[76px] pt-[126px] relative z-10">
-        <div className="text-[20px] font-medium">UNA EXPRESS - I</div>
-        <div className="text-[50px] font-semibold">
+        <div className="text-[28px] font-medium">UNA EXPRESS - I</div>
+        <div className="text-[60px] font-semibold">
           우나 익스프레스 1호기 발사 캠페인​
         </div>
         <div className="flex gap-[68px] flex-col md:flex-row mt-[60px]">
           <div>
-            <div className="text-[30px] font-semibold">발사 예정 시각</div>
+            <div className="text-[40px] font-semibold">발사 예정 시각</div>
             <div className="text-5xl mt-[30px]">
               <TimeBox time={launchTime} />
             </div>
           </div>
           <div className="">
-            <div className="text-[30px] font-semibold">발사까지 남은시간</div>
+            <div className="text-[40px] font-semibold">발사까지 남은시간</div>
             <div className="text-5xl mt-[30px]">
               <Timer startTime={launchTime} />
             </div>
@@ -156,7 +156,7 @@ export default function Home() {
               <div
                 key={process}
                 className={clsx(
-                  "text-lg h-[80px] w-[747px] flex-shrink-0 font-semibold pr-20 text-[2.125rem] flex items-center justify-start pl-[40px] rounded-[18px]",
+                  "h-[80px] w-[747px] flex-shrink-0 font-semibold pr-20 text-[30px] flex items-center justify-start pl-[40px] rounded-[18px]",
                   {
                     "opacity-50": index !== 1,
                     "bg-[#90FF67] text-black": index === 1,
