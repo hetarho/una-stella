@@ -76,7 +76,7 @@ export default function Home() {
             currentProcess={currentProcess}
             processNumbers={[1, 10, 18]}
             imgName="PF"
-            text="추진제<br>공급설비"
+            text="공급설비"
             width={160}
             height={71}
           />
