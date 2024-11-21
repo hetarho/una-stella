@@ -93,7 +93,7 @@ export default function Home() {
       style={{ height: "calc(100vh - 64px)" }}
     >
       <div
-        className="absolute top-0 right-0 flex gap-20"
+        className="absolute top-0 right-0 flex gap-20 z-50"
         style={{
           height: "calc(100vh - 64px - 80px)",
         }}
