@@ -76,7 +76,7 @@ export default function Home() {
         className="w-[520px] h-16 text-4xl font-semibold rounded-[18px] flex items-center justify-center border-neutral-700 bg-[#90FF67] text-black cursor"
         onClick={() => {
           const authentication =
-            authInput === process.env.NEXT_PUBLIC_ADMIN_CODE;
+            authInput === process.env.NEXT_PUBLIC_MAIN_CODE;
           if (authentication) {
             setIsAuth(true);
           } else {
@@ -144,8 +144,8 @@ export default function Home() {
             processNumbers={[9, 18]}
             imgName="AR"
             text="안테나 룸"
-            width={69}
-            height={90}
+            width={100}
+            height={120}
             isActive={isSelectedImage}
           />
           <ProcessInfo
@@ -177,7 +177,7 @@ export default function Home() {
           />
         </div>
       </div>
-      <div className="flex flex-1 flex-col items-start pb-12 pl-[76px] pt-[126px] relative z-10">
+      <div className="flex flex-col items-start pb-12 pl-[76px] pt-[126px] relative z-10  flex-1">
         <div className="text-[28px] font-medium">UNA EXPRESS - I</div>
         <div className="text-[60px] font-semibold">
           우나 익스프레스 1호기 발사 캠페인​
@@ -196,16 +196,21 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className="flex flex-col gap-2 mt-[78px]">
+        <div
+          className="flex flex-col gap-2 mt-[78px] overflow-hidden"
+          style={{
+            height: "calc(100vh - 870px)",
+          }}
+        >
           {[...allProcesses]
-            .slice(Math.max(0, currentProcess - 1), currentProcess + 2)
+            .slice(Math.max(0, currentProcess - 1))
             .map((process, index) => (
               <div
-                key={process}
+                key={`process-${index}`}
                 className={clsx(
                   "h-[88px] w-[1000px] flex-shrink-0 font-semibold pr-20 text-[40px] flex items-center justify-start pl-[40px] rounded-[18px]",
                   {
-                    "opacity-50": index !== 1,
+                    "text-[#212121]": index !== 1,
                     "bg-[#90FF67] text-black": index === 1,
                   }
                 )}
@@ -254,10 +259,10 @@ function ProcessInfo({
   isActive: boolean;
 }) {
   return (
-    <div className="flex w-[306px] justify-between h-[120px] items-center">
+    <div className="flex w-[360px] justify-between h-[120px] items-center">
       <div
         className={clsx(
-          "text-[24px] font-semibold flex flex-col items-start justify-center",
+          "text-[35px] font-semibold flex flex-col items-start justify-center",
           {
             "text-white": !processNumbers.includes(currentProcess),
             "text-[#90FF67]": processNumbers.includes(currentProcess),
