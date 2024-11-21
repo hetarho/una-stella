@@ -12,6 +12,9 @@ import { db } from "@/firebaseConfig";
 import { utcToKst } from "./utils/time";
 
 export default function Home() {
+  const [isAuth, setIsAuth] = useState(false);
+  const [authInput, setAuthInput] = useState("");
+  const [isAuthError, setIsAuthError] = useState(false);
   const [launchTime, setLaunchTime] = useState<Date>();
   const [isSelectedImage, setIsSelectedImage] = useState(false);
   const [currentProcess, setCurrentProcess] = useState(0);
@@ -48,7 +51,43 @@ export default function Home() {
     };
   }, []);
 
-  return (
+  return !isAuth ? (
+    <div
+      className="w-screen flex items-center justify-center flex-col gap-12"
+      style={{ height: "calc(100vh - 64px)" }}
+    >
+      <div className="text-5xl font-semibold">인증 코드를 입력해주세요.</div>
+      <div className="flex flex-col gap-4 items-center">
+        <input
+          className="w-[520px] h-16 text-4xl font-semibold border-b-2 border-neutral-700 text-black"
+          onChange={(e) => {
+            setAuthInput(e.target.value);
+            setIsAuthError(false);
+          }}
+        />
+
+        {isAuthError && (
+          <div className="text-red-500 text-2xl font-semibold">
+            인증 코드가 일치하지 않습니다.
+          </div>
+        )}
+      </div>
+      <div
+        className="w-[520px] h-16 text-4xl font-semibold rounded-[18px] flex items-center justify-center border-neutral-700 bg-[#90FF67] text-black cursor"
+        onClick={() => {
+          const authentication =
+            authInput === process.env.NEXT_PUBLIC_ADMIN_CODE;
+          if (authentication) {
+            setIsAuth(true);
+          } else {
+            setIsAuthError(true);
+          }
+        }}
+      >
+        확인
+      </div>
+    </div>
+  ) : (
     <div
       className="flex flex-col w-full relative"
       style={{ height: "calc(100vh - 64px)" }}
@@ -71,6 +110,7 @@ export default function Home() {
             text="준비실"
             width={160}
             height={71}
+            isActive={isSelectedImage}
           />
           <ProcessInfo
             currentProcess={currentProcess}
@@ -79,6 +119,7 @@ export default function Home() {
             text="공급설비"
             width={160}
             height={71}
+            isActive={isSelectedImage}
           />
           <ProcessInfo
             currentProcess={currentProcess}
@@ -87,6 +128,7 @@ export default function Home() {
             text="통제실"
             width={160}
             height={71}
+            isActive={isSelectedImage}
           />
           <ProcessInfo
             currentProcess={currentProcess}
@@ -95,6 +137,7 @@ export default function Home() {
             text="지원실"
             width={160}
             height={71}
+            isActive={isSelectedImage}
           />
           <ProcessInfo
             currentProcess={currentProcess}
@@ -103,6 +146,7 @@ export default function Home() {
             text="안테나 룸"
             width={69}
             height={90}
+            isActive={isSelectedImage}
           />
           <ProcessInfo
             currentProcess={currentProcess}
@@ -111,6 +155,7 @@ export default function Home() {
             text="해상 통제"
             width={120}
             height={120}
+            isActive={isSelectedImage}
           />
           <ProcessInfo
             currentProcess={currentProcess}
@@ -119,6 +164,7 @@ export default function Home() {
             text="소방"
             width={120}
             height={120}
+            isActive={isSelectedImage}
           />
           <ProcessInfo
             currentProcess={currentProcess}
@@ -127,6 +173,7 @@ export default function Home() {
             text="경찰"
             width={120}
             height={120}
+            isActive={isSelectedImage}
           />
         </div>
       </div>
@@ -156,7 +203,7 @@ export default function Home() {
               <div
                 key={process}
                 className={clsx(
-                  "h-[88px] w-[747px] flex-shrink-0 font-semibold pr-20 text-[40px] flex items-center justify-start pl-[40px] rounded-[18px]",
+                  "h-[88px] w-[1000px] flex-shrink-0 font-semibold pr-20 text-[40px] flex items-center justify-start pl-[40px] rounded-[18px]",
                   {
                     "opacity-50": index !== 1,
                     "bg-[#90FF67] text-black": index === 1,
@@ -196,6 +243,7 @@ function ProcessInfo({
   text,
   width,
   height,
+  isActive,
 }: {
   currentProcess: number;
   processNumbers: number[];
@@ -203,6 +251,7 @@ function ProcessInfo({
   text: string;
   width: number;
   height: number;
+  isActive: boolean;
 }) {
   return (
     <div className="flex w-[306px] justify-between h-[120px] items-center">
@@ -227,7 +276,9 @@ function ProcessInfo({
       <div className="w-[160px] flex justify-start items-start">
         <Image
           src={`/${imgName}${
-            processNumbers.includes(currentProcess) ? "_selected" : ""
+            processNumbers.includes(currentProcess) && isActive
+              ? "_selected"
+              : ""
           }.png`}
           alt={text}
           width={width}
