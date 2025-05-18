@@ -181,7 +181,7 @@ export default function Home() {
         </div>
       </div>
       <div className="flex flex-col items-start pb-12 pl-[76px] pt-[126px] relative z-10  flex-1">
-        <div className="text-[28px] font-medium">UNA EXPRESS - I</div>
+        <div className="text-[28px] font-medium">UNA EXPRESS - I (R)</div>
         <div className="text-[60px] font-semibold">
           우나 익스프레스 1호기 발사 캠페인​
         </div>
