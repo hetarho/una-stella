@@ -33,9 +33,9 @@ export default function RootLayout({
             <Image src={"/logo.png"} alt="logo" width={74} height={34} />
           </div>
           <div className="flex-1 flex justify-center items-center text-[20px] font-medium">
-            UNA EXPRESS-I
+            UNA EXPRESS-I (R)
           </div>
-          <div className="text-[20px] font-semibold">2024</div>
+          <div className="text-[20px] font-semibold">2025</div>
         </footer>
       </body>
     </html>

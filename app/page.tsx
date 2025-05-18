@@ -307,7 +307,7 @@ function ProcessImage({
   const [url, setUrl] = useState(`/process_selected${currentProcess}.png`);
 
   useEffect(() => {
-    const hasSelectedImage = [2, 4, 5, 6, 7, 8, 9, 10, 15, 16, 18].includes(
+    const hasSelectedImage = [2, 4, 5, 6, 7, 8, 10, 11, 15, 16, 18].includes(
       currentProcess
     );
 
